@@ -28,7 +28,7 @@ function foo(a, b) {
     console.log(`Entering foo(${ a }, ${ b }) at line 1.`);
     var x = 'blah';
     var y = function (z) {
-        console.log(`Entering <anonymous function>(${ z }) at line 4.`);
+        console.log(`Entering <anonymous function>(${ z }) at line 3.`);
         return z + 3;
     }(2);
 }
@@ -67,6 +67,50 @@ Also, I added a couple of scripts to the *package.json* file, so I can carry on 
 ```
 
 ## Task 3: Add function name and parameters.
+
+To fulfill this task, I needed to complete the following functions:
+* *addLogging(code)*: Allows to build the AST and traverses it. It's main objective is to call the *addBeforeCode(node)* function in order to modify the **AST**, only in the required functions. It is important to say that the *ecmaVersion* in the first line is necessary if we want to work with backticks (``). This occurs because **Espree** does not support them in old versions.
+
+    ```javascript
+    export function addLogging(code) {
+        let ast = espree.parse(code, {ecmaVersion: 12});
+        estraverse.traverse(ast, {
+        enter: function(node, parent) {
+            if (node.type === 'FunctionDeclaration' ||
+                node.type === 'FunctionExpression') {
+                addBeforeCode(node);
+            }
+        }
+        });
+        return escodegen.generate(ast);
+    }
+    ```
+
+* *addBeforeCode(node)*: Allows to modify the **AST**, inserting code in it. All I had to do was to take the name of the function and it's arguments. With that, I created a string that has all the information.
+
+```javascript
+    function addBeforeCode(node) {
+        let parameters = '';
+
+        // Function name.
+        let name = node.id ? node.id.name : '<anonymous function>';
+
+        // Function parameters.
+        if (node.params.length != 0) {
+            parameters = node.params.map(param => ` \${ ${param.name} }`);
+            parameters[0] = parameters[0].slice(1);
+        }
+
+        // Creating the code to insert.
+        let beforeCode = `console.log(\`Entering ${name}(${parameters})\`);`;
+
+        // Creating the new node.
+        let beforeNodes = espree.parse(beforeCode, {ecmaVersion: 12}).body;
+
+        // Adding the new node.
+        node.body.body = beforeNodes.concat(node.body.body);
+    }
+```
 
 ## Task 4: Arrow functions supported.
 
