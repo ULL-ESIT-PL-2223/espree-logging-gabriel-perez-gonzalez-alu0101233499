@@ -7,6 +7,7 @@ const { version } = require("../package.json");
 import { transpile } from "../src/logging-espree.js";
 
 program
+  .name('./bin/log.js')
   .version(version)
   .argument("<filename>", 'file with the original code')
   .option("-o, --output <filename>", "file in which to write the output")
