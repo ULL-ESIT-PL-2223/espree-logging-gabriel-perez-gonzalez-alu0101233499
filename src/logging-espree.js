@@ -30,7 +30,8 @@ export function addLogging(code) {
     estraverse.traverse(ast, {
       enter: function(node, parent) {
         if (node.type === 'FunctionDeclaration' ||
-            node.type === 'FunctionExpression') {
+            node.type === 'FunctionExpression' ||
+            node.type === 'ArrowFunctionExpression') {
             addBeforeCode(node);
         }
       }
@@ -38,6 +39,10 @@ export function addLogging(code) {
     return escodegen.generate(ast);
 }
 
+/**
+ * AST transformation.
+ * @param {AST function type node} node AST node.
+ */
 function addBeforeCode(node) {
     let parameters = '';
 
@@ -50,18 +55,23 @@ function addBeforeCode(node) {
         parameters[0] = parameters[0].slice(1);
     }
 
-    let beforeCode = `console.log(\`Entering ${name}(${parameters})\`);`;
+    // Creating the code to insert.
+    let beforeCode = `console.log(\`Entering ${name}(${parameters}) at line ${node.loc.start.line}\`);`;
+
+    // Creating the new node.
     let beforeNodes = espree.parse(beforeCode, {ecmaVersion: 12}).body;
+
+    // Adding the new node.
     node.body.body = beforeNodes.concat(node.body.body);
 }
 
 console.log(
-    addLogging(`
-        function foo(a, b) {
-            var x = 'blah';
-            var y = (function (z) {
-                return z + 3;
-            })(2);
+    addLogging(
+       `function foo(a, b, c) {
+            let x = 'tutu';
+            let y = (function (x) { return x * x })(2);
+            let z = (e => { return e + 1 })(4);
+            console.log(x,y,z);
         }
         foo(1, 'wut', 3);
     `)

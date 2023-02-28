@@ -66,7 +66,7 @@ Also, I added a couple of scripts to the *package.json* file, so I can carry on 
 },
 ```
 
-## Task 3: Add function name and parameters.
+## Task 3: Add function and parameters names.
 
 To fulfill this task, I needed to complete the following functions:
 * *addLogging(code)*: Allows to build the AST and traverses it. It's main objective is to call the *addBeforeCode(node)* function in order to modify the **AST**, only in the required functions. It is important to say that the *ecmaVersion* in the first line is necessary if we want to work with backticks (``). This occurs because **Espree** does not support them in old versions.
@@ -88,7 +88,7 @@ To fulfill this task, I needed to complete the following functions:
 
 * *addBeforeCode(node)*: Allows to modify the **AST**, inserting code in it. All I had to do was to take the name of the function and it's arguments. With that, I created a string that has all the information.
 
-```javascript
+    ```javascript
     function addBeforeCode(node) {
         let parameters = '';
 
@@ -110,11 +110,108 @@ To fulfill this task, I needed to complete the following functions:
         // Adding the new node.
         node.body.body = beforeNodes.concat(node.body.body);
     }
+    ```
+
+If we run the code with the following function:
+
+```javascript
+function foo(a, b) {
+    var x = 'blah';
+    var y = (function (z) {
+        return z + 3;
+    })(2);
+}
 ```
+
+The result shows this, at this point:
+
+![First try](img/try1.png)
 
 ## Task 4: Arrow functions supported.
 
+This task is easily acomplished if we modify the *addLogging(code)* function. The only thing that is needed is to change the conditional clause, adding a new condition that supports **ArrowFunctionExpression**. With this, the task is completed.
+
+```javascript
+export function addLogging(code) {
+    let ast = espree.parse(code, {ecmaVersion: 12});
+    estraverse.traverse(ast, {
+      enter: function(node, parent) {
+        if (node.type === 'FunctionDeclaration' ||
+            node.type === 'FunctionExpression' ||
+            node.type === 'ArrowFunctionExpression') {
+            addBeforeCode(node);
+        }
+      }
+    });
+    return escodegen.generate(ast);
+}
+```
+
+If we try this modified function with the following code (contains an arrow function):
+
+```javascript
+function foo(a, b, c) {
+    let x = 'tutu';
+    let y = (function (x) { return x * x })(2);
+    let z = (e => { return e + 1 })(4);
+    console.log(x,y,z);
+}
+```
+
+The result shows that the arrow function assigned to *let z* is visited, showing that it's name is anonymous and it's "e" parameter:
+
+![Second try](img/try2.png)
+
 ## Task 5: Add line number.
+
+In order to show the line number, we must modify our two functions. This happens because the following reasons:
+* In the *addLogging(code)* function, when we parse the code, we must add an option that allows the resultant **AST** to have the location information. This means that, aside from other information, the **AST** will have the lines where all the nodes are located inside the code.
+
+    ```javascript
+    export function addLogging(code) {
+        let ast = espree.parse(code, {ecmaVersion: 12, loc: true});
+        estraverse.traverse(ast, {
+        enter: function(node, parent) {
+            if (node.type === 'FunctionDeclaration' ||
+                node.type === 'FunctionExpression' ||
+                node.type === 'ArrowFunctionExpression') {
+                addBeforeCode(node);
+            }
+        }
+        });
+        return escodegen.generate(ast);
+    }
+    ```
+
+* In the *addBeforeCode(node)* function, we need to extract the location and add it to our modified code.
+
+    ```javascript
+    function addBeforeCode(node) {
+        let parameters = '';
+
+        // Function name.
+        let name = node.id ? node.id.name : '<anonymous function>';
+
+        // Function parameters.
+        if (node.params.length != 0) {
+            parameters = node.params.map(param => ` \${ ${param.name} }`);
+            parameters[0] = parameters[0].slice(1);
+        }
+
+        // Creating the code to insert.
+        let beforeCode = `console.log(\`Entering ${name}(${parameters}) at line ${node.loc.start.line}\`);`;
+
+        // Creating the new node.
+        let beforeNodes = espree.parse(beforeCode, {ecmaVersion: 12}).body;
+
+        // Adding the new node.
+        node.body.body = beforeNodes.concat(node.body.body);
+    }
+    ```
+
+Once all the changes are done, if we try the functions with the arrow function code we tried in the previous task, the result is:
+
+![Third try](img/try3.png)
 
 ## Task 6: Testing.
 
