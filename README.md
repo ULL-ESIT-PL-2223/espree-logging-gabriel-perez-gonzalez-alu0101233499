@@ -215,9 +215,188 @@ Once all the changes are done, if we try the functions with the arrow function c
 
 ## Task 6: Testing.
 
+In this task, we must use Mocha in order to execute a set of tests to make sure the code is working fine.
+The tests are separated in some files:
+* **Input files**: They are located in the *test/data/inputs* folder and their content is a **JS** code.
+
+    ```javascript
+    function foo(a, b) {   
+        var x = 'blah';   
+        var y = (function () {
+            return 3;
+        })();
+    }     
+    foo(1, 'wut', 3);
+    ```
+
+* **Expected files**: They are located in the *test/data/expected* folder and their content is a **JS** code, which must be the resultant code when we apply the transformations. This is, each time it enters a function, it must be able to write the *console.log* with it's information.
+
+    ```javascript
+    function foo(a, b) {
+        console.log(`Entering foo(${ a }, ${ b }) at line 1`);
+        var x = 'blah';
+        var y = function () {
+            console.log(`Entering <anonymous function>() at line 3`);
+            return 3;
+        }();
+    }
+    foo(1, 'wut', 3);
+    ```
+
+* **Result files**: They are located in the *test/data/results* folder and their content is the expected execution of the generated **JS** code.
+
+    ```javascript
+    Entering foo(1, wut) at line 1
+    Entering <anonymous function>() at line 3
+    ```
+
+* **Output files**: They are located in the *test/data/outputs* folder and their content is the execution of the generated **JS** code. Their content is deleted when the tests pass successfully.
+
+    ```javascript
+    Entering foo(1, wut) at line 1
+    Entering <anonymous function>() at line 3
+    ```
+
+Also, we need a file where our tests will be described (*test/test-description.mjs*) and a file where our tests will be executed (*test/test.mjs*).
+
+* **Test description file**: In this file, I defined each test as an object with it's files.
+
+    ```javascript
+    export default [
+    {
+        input: 'test1.js',
+        output: 'logged1.js',
+        correctLogged: 'correct-logged1.js',
+        correctOut: 'logged-out1.txt'
+    },
+    {
+        input: 'test2.js',
+        output: 'logged2.js',
+        correctLogged: 'correct-logged2.js',
+        correctOut: 'logged-out2.txt'
+    },
+    {
+        input: 'test3.js',
+        output: 'logged3.js',
+        correctLogged: 'correct-logged3.js',
+        correctOut: 'logged-out3.txt'
+    },
+    {
+        input: 'test4.js',
+        output: 'logged4.js',
+        correctLogged: 'correct-logged4.js',
+        correctOut: 'logged-out4.txt'
+    }
+    ]
+    ```
+
+* **Test execution file**: In this file, the tests will be executed with a *for* loop that will iterate through the test description array.
+
+    ```javascript
+    import { transpile } from "../src/logging-espree.js";
+    import assert from 'assert';
+    import * as fs from "fs/promises";
+    import { dirname } from 'path';
+    import { fileURLToPath } from 'url';
+
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    import Tst from './test-description.mjs';
+
+    const Test = Tst.map(t => ({
+        input: __dirname + '/data/inputs/' + t.input,
+        output: __dirname + '/data/outputs/' + t.output,
+        correctLogged: __dirname + '/data/expected/' + t.correctLogged,
+        correctOut: __dirname + '/data/results/' + t.correctOut,
+    })
+    )
+
+    function removeSpaces(s) {
+        return s.replace(/\s/g, '');
+    }
+
+    for (let i = 0; i < Test.length; i++) {
+        it(`transpile(${Tst[i].input}, ${Tst[i].output})`, async () => {
+
+            // Compile the input and check the output program is what expected
+            await transpile(Test[i].input, Test[i].output);
+            let output = await fs.readFile(Test[i].output, 'utf-8');
+            let expected = await fs.readFile(Test[i].correctLogged, 'utf-8');
+            assert.equal(removeSpaces(output), removeSpaces(expected));
+            await fs.unlink(Test[i].output);
+
+            // Run the output program and check the logged output is what expected
+            let correctOut = await fs.readFile(Test[i].correctOut, 'utf-8');
+
+            let oldLog = console.log; // mocking console.log
+            let result = [];
+            let resultantString;
+            console.log = function (...s) {
+                if (s.length > 1) {
+                    let sString = s.join(' ');
+                    s = [sString];
+                }
+                result.push(s);
+                resultantString = result.join('\n');
+            };
+            eval(output);
+
+            assert.equal(removeSpaces(resultantString), removeSpaces(correctOut));
+            console.log = oldLog;
+        });  
+    }
+    ```
+
+With these steps, if we execute the tests, we might be able to see that they are passed successfully:
+
+![Testing](img/tests.png)
+
+There's a problem with **asynchronous testing** that is making my tests to pass whenever they want.
+
 ## Task 7: Code Coverage.
 
+I had problems when I generated the code coverage report. Even with a correct script in the *package.json* file, the coverage report shows 0 code coverage.
+
+I searched about this issue, and it seems that **Nyc** does not work with **ES6** modules anymore, so a solution may be using **CommonJS** modules in the whole project.
+
+![Coverage](img/coverage.png)
+
 ## Task 8: CI with GitHub Actions.
+
+If we want to use Continuous Integration with GitHub Actions, the only thing I had to do was editing the *.github/workflows/nodejs.yml* file and fill it with the following lines:
+
+```yml
+# Write your workflow for CI here
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the $default-branch branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Install
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+```
 
 ## Task 9: Documentation with JSDoc.
 

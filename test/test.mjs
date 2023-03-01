@@ -8,10 +8,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 import Tst from './test-description.mjs';
 
 const Test = Tst.map(t => ({
-  input: __dirname + '/data/inputs/' + t.input,
-  output: __dirname + '/data/outputs/' + t.output,
-  correctLogged: __dirname + '/data/expected/' + t.correctLogged,
-  correctOut: __dirname + '/data/results/' + t.correctOut,
+    input: __dirname + '/data/inputs/' + t.input,
+    output: __dirname + '/data/outputs/' + t.output,
+    correctLogged: __dirname + '/data/expected/' + t.correctLogged,
+    correctOut: __dirname + '/data/results/' + t.correctOut,
 })
 )
 
@@ -36,6 +36,10 @@ for (let i = 0; i < Test.length; i++) {
         let result = [];
         let resultantString;
         console.log = function (...s) {
+            if (s.length > 1) {
+                let sString = s.join(' ');
+                s = [sString];
+            }
             result.push(s);
             resultantString = result.join('\n');
         };

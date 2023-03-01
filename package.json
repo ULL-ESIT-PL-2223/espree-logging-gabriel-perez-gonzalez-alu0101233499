@@ -12,6 +12,10 @@
         "cov": "nyc --reporter=lcov --reporter=text npm run test",
         "doc": "jsdoc ./src"
     },
+    "nyc": {
+        "all": true,
+        "include": [ "src/*.js" ]
+    },
     "dependencies": {
         "acorn": "^8.8.2",
         "chai": "^4.3.6",
