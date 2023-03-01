@@ -1,34 +1,45 @@
 {
-    "name": "espree-logging-solution",
-    "author": "Casiano Rodriguez Leon <crguezl@ull.edu.es> (https://crguezl.github.io/)",
-    "description": "Adds logs to javascript code",
-    "type": "module",
-    "bin": {
-        "funlog": "bin/log.js"
-    },
-    "scripts": {
-        "log": "./bin/log.js -h",
-        "test": "mocha test/test.mjs",
-        "cov": "nyc --reporter=lcov --reporter=text npm run test",
-        "doc": "jsdoc ./src/*js"
-    },
-    "nyc": {
-        "all": true,
-        "include": [ "src/*.js" ]
-    },
-    "dependencies": {
-        "acorn": "^8.8.2",
-        "chai": "^4.3.6",
-        "commander": "^10.0.0",
-        "escodegen": "^2.0.0",
-        "espree": "^9.4.1",
-        "estraverse": "^5.2.0",
-        "nyc": "^15.1.0",
-        "underscore": "^1.12.0"
-    },
-    "version": "0.3.0",
-    "devDependencies": {
-        "jsdoc": "^4.0.2",
-        "mocha": "^10.2.0"
-    }
+  "name": "@alu0101233499org/espree-logging-solution",
+  "author": "alu0101233499org <alu0101233499@ull.edu.es>",
+  "description": "Adds logs to javascript code",
+  "type": "module",
+  "bin": {
+    "funlog": "bin/log.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ULL-ESIT-PL-2223/espree-logging-gabriel-perez-gonzalez-alu0101233499.git"
+  },
+  "scripts": {
+    "log": "./bin/log.js -h",
+    "test": "mocha test/test.mjs",
+    "cov": "nyc --reporter=lcov --reporter=text npm run test",
+    "doc": "jsdoc ./src/*js"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/*.js"
+    ]
+  },
+  "dependencies": {
+    "acorn": "^8.8.2",
+    "chai": "^4.3.6",
+    "commander": "^10.0.0",
+    "escodegen": "^2.0.0",
+    "espree": "^9.4.1",
+    "estraverse": "^5.2.0",
+    "nyc": "^15.1.0",
+    "underscore": "^1.12.0"
+  },
+  "version": "0.3.0",
+  "devDependencies": {
+    "jsdoc": "^4.0.2",
+    "mocha": "^10.2.0"
+  },
+  "main": "salida.js",
+  "directories": {
+    "test": "test"
+  },
+  "license": "ISC"
 }
