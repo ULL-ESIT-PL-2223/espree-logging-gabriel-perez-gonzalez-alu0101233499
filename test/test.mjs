@@ -27,7 +27,7 @@ for (let i = 0; i < Test.length; i++) {
         let output = await fs.readFile(Test[i].output, 'utf-8');
         let expected = await fs.readFile(Test[i].correctLogged, 'utf-8');
         assert.equal(removeSpaces(output), removeSpaces(expected));
-        await fs.unlink(Test[i].output);
+        // await fs.unlink(Test[i].output);
 
         // Run the output program and check the logged output is what expected
         let correctOut = await fs.readFile(Test[i].correctOut, 'utf-8');
