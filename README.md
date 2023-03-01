@@ -446,6 +446,6 @@ If we run the script a documentation report will be generated in the */out* fold
 
 In order to publish the package in **NPM**, I needed to create an account and organizations in **NPM**. This allows to publish unlimited free packages in it.
 
-I have encountered many problems and I couldn't accomplish this task. This occurred because I couldn't log in to the **npm registry** due to the Virtual Machine, which doesn't allow to open the website (because of the xdg-open, that calls the system in order to run the URL in the preferred browser, which is not posible in the Virtual Machine). One possible solution maybe be developing this assignment in my PC instead of the Virtual Machine.
+I have encountered many problems and I couldn't accomplish this task. This occurred because I couldn't log in to the **npm registry** due to the Virtual Machine, which doesn't allow to open the website (because of the xdg-open, that calls the system in order to run the URL in the preferred browser, which is not posible in the Virtual Machine). One possible solution may be developing this assignment in my PC instead of the Virtual Machine.
 
 ![Error](img/npm.png)
