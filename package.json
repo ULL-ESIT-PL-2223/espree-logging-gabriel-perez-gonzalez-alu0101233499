@@ -8,7 +8,7 @@
     },
     "scripts": {
         "log": "./bin/log.js -h",
-        "test": "mocha",
+        "test": "mocha test/test.mjs",
         "cov": "nyc --reporter=lcov --reporter=text npm run test",
         "doc": "jsdoc ./src"
     },

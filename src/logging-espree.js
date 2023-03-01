@@ -9,7 +9,7 @@ import * as fs from "fs/promises";
  * @param {string} outputFile Output file's name.
  */
 export async function transpile(inputFile, outputFile) {
-    let code = fs.readFileSync(inputFile, 'utf8');
+    let code = await fs.readFile(inputFile, 'utf8');
     code = addLogging(code);
     fs.writeFile(outputFile, code, err => {
       if (err) {
@@ -64,15 +64,3 @@ function addBeforeCode(node) {
     // Adding the new node.
     node.body.body = beforeNodes.concat(node.body.body);
 }
-
-console.log(
-    addLogging(
-       `function foo(a, b, c) {
-            let x = 'tutu';
-            let y = (function (x) { return x * x })(2);
-            let z = (e => { return e + 1 })(4);
-            console.log(x,y,z);
-        }
-        foo(1, 'wut', 3);
-    `)
-);

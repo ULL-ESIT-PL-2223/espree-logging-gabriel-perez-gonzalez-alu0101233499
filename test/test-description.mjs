@@ -17,4 +17,10 @@ export default [
     correctLogged: 'correct-logged3.js',
     correctOut: 'logged-out3.txt'
   },
+  {
+    input: 'test4.js',
+    output: 'logged4.js',
+    correctLogged: 'correct-logged4.js',
+    correctOut: 'logged-out4.txt'
+  }
 ]
