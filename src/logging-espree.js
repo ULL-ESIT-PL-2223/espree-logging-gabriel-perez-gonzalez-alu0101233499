@@ -41,7 +41,7 @@ export function addLogging(code) {
 
 /**
  * AST transformation.
- * @param {AST function type node} node AST node.
+ * @param {Object} node AST node.
  */
 function addBeforeCode(node) {
     let parameters = '';

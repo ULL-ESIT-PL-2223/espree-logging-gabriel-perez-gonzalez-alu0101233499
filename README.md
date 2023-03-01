@@ -354,7 +354,14 @@ There's a problem with **asynchronous testing** that is making my tests to pass 
 
 ## Task 7: Code Coverage.
 
-I had problems when I generated the code coverage report. Even with a correct script in the *package.json* file, the coverage report shows 0 code coverage.
+I had problems when I generated the code coverage report. Even with a correct script in the *package.json* file, the coverage report shows 0 code coverage. This happenned even after adding some options to **Nyc** in order to include the code coverage specifically:
+
+```javascript
+"nyc": {
+    "all": true,
+    "include": [ "src/*.js" ]
+},
+```
 
 I searched about this issue, and it seems that **Nyc** does not work with **ES6** modules anymore, so a solution may be using **CommonJS** modules in the whole project.
 
@@ -398,6 +405,40 @@ jobs:
         run: npm run test
 ```
 
+When we make a push to the repo, we can see the continuous integration execution, with all the jobs and steps we defined:
+
+![Continuous Integration](img/integration.png)
+
 ## Task 9: Documentation with JSDoc.
+
+If we want to create a documentation report with **JSDoc**, we must follow some steps:
+* **Adding JSDoc script to the package.json**: We need to add a script that allows to generate the documentation report.
+
+    ```javascript
+    "doc": "jsdoc ./src/*js"
+    ```
+* **Adding JSDoc comments to the functions**: The **JSDoc** comments have the following structure:
+
+    ```javascript
+    /**
+     * Read the file with the JS program, calls addLogin to add the login messages and writes the output.
+     * @param {string} inputFile Input file's name.
+     * @param {string} outputFile Output file's name.
+     */
+    export async function transpile(inputFile, outputFile) {
+        let code = await fs.readFile(inputFile, 'utf8');
+        code = addLogging(code);
+        fs.writeFile(outputFile, code, err => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        });
+    }
+    ```
+
+If we run the script a documentation report will be generated in the */out* folder. If we open the *index.html* with **LiveServer** we can see the following page:
+
+![Documentation](img/documentation.png)
 
 ## Task 10: Publishing the module in NPM and GitHub.
