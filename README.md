@@ -1,15 +1,16 @@
-[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-f4981d0f882b2a3f0472912d15f9806d57e124e0fc890972558857b51b24a6f9.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=10311247)
-
 # Assignment: Espree Logging
 
+[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-f4981d0f882b2a3f0472912d15f9806d57e124e0fc890972558857b51b24a6f9.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=10311247)
+
 In this assignment, we must have done the following main objectives:
+
 * Show the function's name each time we enter a function.
 * Show the function's parameters each time we enter a function.
 * Show the line where the function was initialized.
 
 These steps will be executed each time the program encounters a **Function Declaration**, **Function Expression** or **Arrow Function**.
 
-The `logging-espree.js` code was modified in order to show all the values I said previously: 
+The `logging-espree.js` code was modified in order to show all the values I said previously:
 Example:
 
 ```javascript
@@ -36,7 +37,7 @@ function foo(a, b) {
 foo(1, 'wut', 3);
 ```
 
-## Task 1: CLI with [Commander.js](https://www.npmjs.com/package/commander).
+## Task 1: CLI with [Commander.js](https://www.npmjs.com/package/commander)
 
 For the first task, as usual, I created a **CLI** with *Commmander*. The code was almost complete, but I added a name to the program.
 The result is the following one:
@@ -45,7 +46,7 @@ The result is the following one:
 
 The name is in the *Usage* section. It's default value is *log*, but I changed it to *./bin/log.js*.
 
-## Task 2: Scripts in *package.json* and imported modules.
+## Task 2: Scripts in *package.json* and imported modules
 
 The first thing was to add some dependencies in order to work with tests, make better documentation reports and use code coverage. The following lines represent the dependencies I added:
 
@@ -55,7 +56,7 @@ The first thing was to add some dependencies in order to work with tests, make b
 "jsdoc": "^4.0.2"
 ```
 
-Also, I added a couple of scripts to the *package.json* file, so I can carry on some tasks a little easier. 
+Also, I added a couple of scripts to the *package.json* file, so I can carry on some tasks a little easier.
 
 ```javascript
 "scripts": {
@@ -66,9 +67,10 @@ Also, I added a couple of scripts to the *package.json* file, so I can carry on 
 },
 ```
 
-## Task 3: Add function and parameters names.
+## Task 3: Add function and parameters names
 
 To fulfill this task, I needed to complete the following functions:
+
 * *addLogging(code)*: Allows to build the AST and traverses it. It's main objective is to call the *addBeforeCode(node)* function in order to modify the **AST**, only in the required functions. It is important to say that the *ecmaVersion* in the first line is necessary if we want to work with backticks (``). This occurs because **Espree** does not support them in old versions.
 
     ```javascript
@@ -127,7 +129,7 @@ The result shows this, at this point:
 
 ![First try](img/try1.png)
 
-## Task 4: Arrow functions supported.
+## Task 4: Arrow functions supported
 
 This task is easily acomplished if we modify the *addLogging(code)* function. The only thing that is needed is to change the conditional clause, adding a new condition that supports **ArrowFunctionExpression**. With this, the task is completed.
 
@@ -162,9 +164,10 @@ The result shows that the arrow function assigned to *let z* is visited, showing
 
 ![Second try](img/try2.png)
 
-## Task 5: Add line number.
+## Task 5: Add line number
 
 In order to show the line number, we must modify our two functions. This happens because the following reasons:
+
 * In the *addLogging(code)* function, when we parse the code, we must add an option that allows the resultant **AST** to have the location information. This means that, aside from other information, the **AST** will have the lines where all the nodes are located inside the code.
 
     ```javascript
@@ -213,10 +216,11 @@ Once all the changes are done, if we try the functions with the arrow function c
 
 ![Third try](img/try3.png)
 
-## Task 6: Testing.
+## Task 6: Testing
 
 In this task, we must use Mocha in order to execute a set of tests to make sure the code is working fine.
 The tests are separated in some files:
+
 * **Input files**: They are located in the *test/data/inputs* folder and their content is a **JS** code.
 
     ```javascript
@@ -352,7 +356,7 @@ With these steps, if we execute the tests, we might be able to see that they are
 
 There's a problem with **asynchronous testing** that is making my tests to pass whenever they want.
 
-## Task 7: Code Coverage.
+## Task 7: Code Coverage
 
 I had problems when I generated the code coverage report. Even with a correct script in the *package.json* file, the coverage report shows 0 code coverage. This happenned even after adding some options to **Nyc** in order to include the code coverage specifically:
 
@@ -367,7 +371,7 @@ I searched about this issue, and it seems that **Nyc** does not work with **ES6*
 
 ![Coverage](img/coverage.png)
 
-## Task 8: CI with GitHub Actions.
+## Task 8: CI with GitHub Actions
 
 If we want to use Continuous Integration with GitHub Actions, the only thing I had to do was editing the *.github/workflows/nodejs.yml* file and fill it with the following lines:
 
@@ -409,9 +413,10 @@ When we make a push to the repo, we can see the continuous integration execution
 
 ![Continuous Integration](img/integration.png)
 
-## Task 9: Documentation with JSDoc.
+## Task 9: Documentation with JSDoc
 
 If we want to create a documentation report with **JSDoc**, we must follow some steps:
+
 * **Adding JSDoc script to the package.json**: We need to add a script that allows to generate the documentation report.
 
     ```javascript
@@ -442,10 +447,16 @@ If we run the script a documentation report will be generated in the */out* fold
 
 ![Documentation](img/documentation.png)
 
-## Task 10: Publishing the module in NPM and GitHub.
+## Task 10: Publishing the module in NPM and GitHub
 
 In order to publish the package in **NPM**, I needed to create an account and organizations in **NPM**. This allows to publish unlimited free packages in it.
 
 I have encountered many problems and I couldn't accomplish this task. This occurred because I couldn't log in to the **npm registry** due to the Virtual Machine, which doesn't allow to open the website (because of the xdg-open, that calls the system in order to run the URL in the preferred browser, which is not posible in the Virtual Machine). One possible solution may be developing this assignment in my PC instead of the Virtual Machine.
 
 ![Error](img/npm.png)
+
+### Solving the errors
+
+After the class session, I solved a couple of errors that happenned because of the use of the Virtual Machine. I prepared my PC's environment in order to work with this assignment and I could achieve the task of publishing the module in **NPM**. Here's an image of it:
+
+![Published](img/published.png)
